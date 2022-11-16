@@ -1,17 +1,15 @@
 {
   "name": "microbiomes-mallapixels",
-  "version": "1.3.1",
+  "version": "2.0.0",
   "description": "",
   "bin": "server/index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development nodemon server/index.js --watch server --watch src/templates/*.hbs",
     "build": "cross-env NODE_ENV=production webpack build --config webpack.config.js",
-
     "pkg:cleanup": "rm -rf .tmp-pkg",
     "pkg:binaries": "npm run build && pkg . --output \".tmp-pkg/$npm_package_name\"",
     "pkg:app": "rm -rf \"$npm_package_name.app\" && cp -r \"scripts/template.app\" \".tmp-pkg/$npm_package_name.app\" && mv \".tmp-pkg/$npm_package_name\" \".tmp-pkg/$npm_package_name.app/Contents/Resources/\" && cp server/.env.example \".tmp-pkg/$npm_package_name.app/Contents/Resources/.env\" && cp server/app.json \".tmp-pkg/$npm_package_name.app/Contents/Resources/\" && mv \".tmp-pkg/$npm_package_name.app\" .",
     "pkg:output": "echo \"\nProject successfully packaged.\nGo to $npm_package_homepage/releases/tag/$npm_package_version to attach package.zip to the $npm_package_version tag\"",
-
     "pkg": "npm run pkg:cleanup && npm run pkg:binaries && npm run pkg:app && npm run pkg:cleanup && npm run pkg:output",
     "postversion": "npm run pkg && git push --all"
   },
