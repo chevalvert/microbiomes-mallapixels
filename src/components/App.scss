@@ -21,6 +21,8 @@
 
     display: grid;
     place-items: center;
+    transform-origin: center center;
+    transform: rotate(var(--angle, 0));
 
     font-family: 'Styrene';
     font-size: 3rem;

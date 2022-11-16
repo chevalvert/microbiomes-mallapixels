@@ -23,13 +23,19 @@ export default class App extends Component {
         class='app'
         store-class-is-shuting-down={state.isShutingDown}
         style={`
-          --shutdown-delay: ${window.ENV.shutdownDelay}ms;
           --offset-x: ${(window.ENV.renderer.offset || [])[0] || 0};
           --offset-y: ${(window.ENV.renderer.offset || [])[1] || 0};
         `}
       >
         <Renderer width={vmin} height={vmin} />
-        <div ref={this.ref('shutdown')} class='app__shutdown'>
+        <div
+          ref={this.ref('shutdown')}
+          class='app__shutdown'
+          style={`
+            --angle: ${window.ENV.shutdownAngle || 0}deg;
+            --shutdown-delay: ${window.ENV.shutdownDelay}ms;
+          `}
+        >
           <div>Appuyer de nouveau<br />pour éteindre</div>
         </div>
       </main>
