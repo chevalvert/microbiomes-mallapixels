@@ -45,19 +45,19 @@ const Store = {
     }),
     behaviors: readable({
       bactérie: {
-        'digestive minus': { speed: 1, size: [10, 20, 20, 20] },
-        'défensive mesurée': { speed: 2, size: [50, 50, 60, 70, 75] },
-        'pathogène magnifique': { speed: 4, size: [100, 150] }
+        'digestive minus': { speed: 1, size: [5, 10, 10, 20, 20] },
+        'défensive mesurée': { speed: 2, size: [30, 50, 50, 60, 70] },
+        'pathogène magnifique': { speed: 4, size: [80, 100, 125] }
       },
       virus: {
-        'dormant rabougri': { speed: 1, size: [10, 20, 20, 20] },
-        'messager moyen': { speed: 2, size: [50, 50, 60, 70, 75] },
-        'infectieux ogre': { speed: 4, size: [100, 150] }
+        'dormant rabougri': { speed: 1, size: [5, 10, 10, 20, 20] },
+        'messager moyen': { speed: 2, size: [50, 30, 50, 60, 70, 70] },
+        'infectieux ogre': { speed: 4, size: [80, 100, 125] }
       },
       champignon: {
-        'sédentaire microscopique': { speed: 1, size: [10, 20, 20, 20] },
-        'curieux commun': { speed: 2, size: [50, 50, 60, 70, 75] },
-        'colonisateur mammouth': { speed: 4, size: [100, 150] }
+        'sédentaire microscopique': { speed: 1, size: [5, 10, 10, 20, 20] },
+        'curieux commun': { speed: 2, size: [50, 30, 50, 60, 70, 70] },
+        'colonisateur mammouth': { speed: 4, size: [80, 100, 125] }
       }
     })
   },
