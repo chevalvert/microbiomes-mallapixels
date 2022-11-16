@@ -23,3 +23,7 @@ done
 sleep 5
 open "http://$DOMAIN/" -n -a "$BROWSER" --args --window-position=1920,0 --app --disable-features=Translate --no-first-run --kiosk
 open "http://$DOMAIN/screen" -n -a "$BROWSER" --args --user-data-dir=$(mktemp -d) --window-position=0,0 --app --disable-features=Translate --no-first-run --kiosk
+
+# Ensure browser main window is focused
+sleep 10
+./click-x64 -x 100 -y 100
