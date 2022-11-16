@@ -86,6 +86,7 @@ export default class Remote extends Component {
 
   async handleSend () {
     anime.remove(ANIMATION)
+    WebSocketServer.send('stripled')
 
     const creature = this.state.creature.get()
     if (!creature) return
