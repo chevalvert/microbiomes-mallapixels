@@ -84,6 +84,8 @@ export default class Remote extends Component {
   }
 
   async handleSend () {
+    anime.remove(ANIMATION)
+
     const creature = this.state.creature.get()
     if (!creature) return
 
@@ -95,13 +97,12 @@ export default class Remote extends Component {
 
     // Correct color for LED
     ANIMATION.pixels = ANIMATION.pixels.map(hex => window.ENV.colorMapping[hex] || hex)
-    this.log(ANIMATION.pixels)
 
     this.refs.renderer.base.style.animation = 'none'
     void this.refs.renderer.base.offsetHeight // eslint-disable-line no-void
     this.refs.renderer.base.style.animation = null
+    await new Promise(resolve => window.setTimeout(resolve, window.ENV.ledAnimationDelay))
 
-    anime.remove(ANIMATION)
     await anime({
       targets: ANIMATION,
       offset: 83,
