@@ -5,7 +5,7 @@
 
   "remoteWebSocketServer": "ws://localhost:8080",
   "shutdownDelay": 5000,
-  "shutdownAngle": 90,
+  "shutdownAngle": -90,
   "ledAnimationDelay": 200,
 
   "renderer": {
