@@ -62,6 +62,7 @@ export default class Remote extends Component {
   }
 
   update () {
+    anime.remove(ANIMATION)
     const [type, behavior] = this.state.gamepadValue.get()
 
     this.state.creature.set(Population.create({
