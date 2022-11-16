@@ -7,16 +7,14 @@ export default class Restorer extends Builder {
     return '#ff528c'
   }
 
-  constructor (params) {
-    super(params)
-
-    // This is a small trick to exploit the Pattern caching system, allowing
-    // multiple caches of the same pattern by defining different redundant patterns
-    const pattern = this.pattern.string || randomOf(['R', 'RR', 'RRR', 'RRRR'])
+  constructor (...params) {
+    super(...params)
 
     this.pattern = new Pattern(
       this.renderer.getContext('trace'),
-      pattern,
+      // This is a small trick to exploit the Pattern caching system, allowing
+      // multiple caches of the same pattern by defining different redundant patterns
+      randomOf(['R', 'RR', 'RRR', 'RRRR']),
       [
         ...new Array(90).fill('black'),
         ...new Array(10).fill('transparent')
