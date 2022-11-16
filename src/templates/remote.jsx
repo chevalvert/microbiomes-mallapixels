@@ -4,6 +4,7 @@ import Remote from 'components/Remote'
 
 import Raf from 'controllers/Raf'
 import WebSocketServer from 'controllers/WebSocketServer'
+import Gamepad from 'controllers/Gamepad'
 
 /// #if DEVELOPMENT
 require('webpack-hot-middleware/client?reload=true')
@@ -12,6 +13,8 @@ require('webpack-hot-middleware/client?reload=true')
 
 ;(async () => {
   render(<Remote />, document.body)
-  WebSocketServer.open()
+
   Raf.start()
+  Gamepad.bind()
+  WebSocketServer.open()
 })()

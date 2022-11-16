@@ -2,6 +2,7 @@ build/*
 server/data/*
 .env
 snapshots/*
+./microbiomes-mallapixels.app
 
 ####### NODE ########
 .tmp

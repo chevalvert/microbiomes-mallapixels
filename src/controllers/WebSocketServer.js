@@ -1,11 +1,13 @@
 import WebSocket from 'reconnectingwebsocket'
 import { writable } from 'utils/state'
+import Emitter from 'tiny-emitter'
 
 export default ({
+  emitter: new Emitter(),
   content: writable({}),
   isClosed: writable(true),
-  sendJson: function (object) {
-    this.socket.send(JSON.stringify(object))
+  send: function (event, data = {}) {
+    this.socket.send(JSON.stringify({ event, data }))
   },
   open: function (url = window.location.origin.replace('http', 'ws').replace(/(#.*)$/, '')) {
     this.socket = new WebSocket(url)
@@ -13,8 +15,8 @@ export default ({
     this.socket.onclose = () => this.isClosed.set(true)
     this.socket.onmessage = message => {
       try {
-        const content = JSON.parse(message.data)
-        this.content.set(content)
+        const { event, data } = JSON.parse(message.data)
+        this.emitter.emit(event, data)
       } catch (error) {
         console.warn(error)
       }
