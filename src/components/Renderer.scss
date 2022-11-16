@@ -1,8 +1,6 @@
 .renderer {
   --angle: 0deg;
 
-  @include debug;
-
   overflow: hidden;
   position: relative;
 
