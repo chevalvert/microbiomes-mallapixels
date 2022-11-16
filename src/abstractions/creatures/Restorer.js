@@ -1,38 +1,26 @@
-import Creature from 'abstractions/Creature'
+import Builder from 'abstractions/creatures/Builder'
+import Pattern from 'abstractions/Pattern'
+import randomOf from 'utils/array-random'
 
-export default class Restorer extends Creature {
+export default class Restorer extends Builder {
   get color () {
-    return 'black'
+    return '#ff528c'
   }
 
   constructor (params) {
     super(params)
-    this.cache = this.renderer && this.renderer.state.cachedLayers.get('trace')
-  }
 
-  render (...args) {
-    super.render(...args)
+    // This is a small trick to exploit the Pattern caching system, allowing
+    // multiple caches of the same pattern by defining different redundant patterns
+    const pattern = this.pattern.string || randomOf(['R', 'RR', 'RRR', 'RRRR'])
 
-    this.renderer.draw('trace', ctx => {
-      ctx.save()
-      ctx.translate(this.center[0], this.center[1])
-      ctx.clip(this.path)
-
-      ctx.NO_ROUND = true
-      ctx.drawImage(
-        this.cache,
-        this.position[0] / ctx.canvas.resolution,
-        this.position[1] / ctx.canvas.resolution,
-        this.size / ctx.canvas.resolution,
-        this.size / ctx.canvas.resolution,
-        Math.floor(-this.radius),
-        Math.floor(-this.radius),
-        Math.ceil(this.size),
-        Math.ceil(this.size)
-      )
-      ctx.NO_ROUND = false
-
-      ctx.restore()
-    })
+    this.pattern = new Pattern(
+      this.renderer.getContext('trace'),
+      pattern,
+      [
+        ...new Array(90).fill('black'),
+        ...new Array(10).fill('transparent')
+      ]
+    )
   }
 }

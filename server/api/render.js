@@ -6,7 +6,6 @@ Handlebars.registerHelper('json', context => JSON.stringify(context))
 const CACHE = new Map()
 
 const pkg = require('../../package.json')
-const app = require(process.env.CONFIGURATION)
 
 module.exports = template => (req, res, next) => {
   const cachable = ['max-age=O', 'no-cache'].includes(req.get('Cache-Control'))
@@ -20,7 +19,7 @@ module.exports = template => (req, res, next) => {
     }
 
     const html = render({
-      app,
+      app: fs.readJSONSync(process.env.CONFIGURATION),
       pkg,
       id: req.params.id || 0,
       env: process.env.NODE_ENV,

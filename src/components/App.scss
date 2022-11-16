@@ -1,55 +1,46 @@
+@keyframes shuting-down {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
 .app {
-  @include no-select;
-
-  h1 {
-    opacity: 0; // DEBUG
-
-    color: white;
-    position: fixed;
-    z-index: 2;
-    font-weight: normal;
-
-    top: 50%;
-    left: 50%;
-    font-size: 16vw;
-    transform: translate(-50%, -50%);
-    line-height: 1;
-
-    mix-blend-mode: color-dodge;
-
-    div:last-child {
-      float: right;
-    }
+  .renderer {
+    border-radius: 100%;
+    margin-left: var(--offset-x);
+    margin-top: var(--offset-y);
   }
 
-  .renderer canvas[data-name='debug'] {
+  &__shutdown {
     position: fixed;
     z-index: 3;
+    color: white;
+    left: var(--offset-x);
+    top: var(--offset-y);
+    width: 100vmin;
+    height: 100vmin;
+
+    display: grid;
+    place-items: center;
+
+    font-family: 'Styrene';
+    font-size: 3rem;
+    line-height: 1.4;
+    text-align: center;
+
+    &::before {
+      @include inset;
+      z-index: -1;
+      content: '';
+      background: black;
+      opacity: 1;
+    }
   }
 
-  &__stats {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: var(--gutter);
+  &.is-shuting-down &__shutdown {
+    animation: shuting-down var(--shutdown-delay, 1s) ease-in forwards;
+  }
 
-    color: white;
-    font-size: small;
-    justify-content: space-between;
-
-    &, .flexgroup {
-      display: flex;
-      gap: var(--gutter);
-    }
-
-    & > *:first-child {
-      flex: 1;
-    }
-
-    [data-label]::before {
-      content: attr(data-label)':\00a0';
-      color: white;
-    }
+  &:not(.is-shuting-down) &__shutdown {
+    opacity: 0;
   }
 }

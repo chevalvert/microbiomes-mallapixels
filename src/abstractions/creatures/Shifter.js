@@ -1,9 +1,10 @@
 import { randomOf } from 'controllers/Prng'
 import Creature from 'abstractions/Creature'
+import Pattern from 'abstractions/Pattern'
 
 export default class Shifter extends Creature {
   get color () {
-    return '#f25700'
+    return 'white'
   }
 
   constructor ({
@@ -12,6 +13,8 @@ export default class Shifter extends Creature {
   } = {}) {
     super(params)
     this.direction = direction
+    this.SHOW_STROKE = true
+    this.pattern = new Pattern(this.renderer.getContext('trace'))
   }
 
   update () {

@@ -1,8 +1,8 @@
 import Store from 'store'
-import classnames from 'classnames'
-import { Noise } from 'noisejs'
+import { readable } from 'utils/state'
 import { Component } from 'utils/jsx'
-import { ceilTo, floorTo, roundTo } from 'missing-math'
+import { Noise } from 'noisejs'
+import { ceilTo, floorTo, roundTo as roundToValue } from 'missing-math'
 import noop from 'utils/noop'
 
 const CACHE = new Map()
@@ -27,11 +27,13 @@ export default class Renderer extends Component {
 
   template (props, state) {
     return (
-      <section id='Renderer' class='renderer'>
-        {Object.entries(Store.renderer.layers.current).map(([name, { smooth }]) => (
+      <section
+        id='Renderer'
+        class='renderer'
+      >
+        {Object.entries(Store.renderer.layers.current).map(([name]) => (
           <canvas
             data-name={name}
-            class={classnames({ pixelated: !smooth })}
             ref={this.refMap('canvas', name)}
           />
         ))}
@@ -40,9 +42,12 @@ export default class Renderer extends Component {
   }
 
   afterMount () {
-    this.#forEachLayers((canvas, context, { name, smooth, resolution, round, style = {} }) => {
-      canvas.width = window.innerWidth * resolution
-      canvas.height = window.innerHeight * resolution
+    this.base.style.width = this.props.width + 'px'
+    this.base.style.height = this.props.height + 'px'
+
+    this.#forEachLayers((canvas, context, { name, resolution, roundTo, style = {} }) => {
+      canvas.width = this.props.width * resolution
+      canvas.height = this.props.height * resolution
       canvas.resolution = 1 / resolution
 
       for (const [prop, value] of Object.entries(style)) {
@@ -50,13 +55,13 @@ export default class Renderer extends Component {
       }
 
       context = context || canvas.getContext('2d')
-      context.imageSmoothingEnabled = smooth
+      context.imageSmoothingEnabled = false
       context.scale(resolution, resolution)
-      context.ceil = v => context.NO_ROUND ? v : isNaN(v) ? v : ceilTo(v, 1 / resolution)
-      context.floor = v => context.NO_ROUND ? v : isNaN(v) ? v : floorTo(v, 1 / resolution)
-      context.round = v => context.NO_ROUND ? v : isNaN(v) ? v : roundTo(v, 1 / resolution)
+      context.ceil = v => context.NO_ROUND ? v : isNaN(v) ? v : ceilTo(v, roundTo)
+      context.floor = v => context.NO_ROUND ? v : isNaN(v) ? v : floorTo(v, roundTo)
+      context.round = v => context.NO_ROUND ? v : isNaN(v) ? v : roundToValue(v, roundTo)
 
-      if (round) {
+      if (roundTo) {
         for (const method of ROUNDABLE_METHODS) {
           const origin = context[method]
           context[method] = (...args) => origin.call(context, ...args.map(context.round))
@@ -64,12 +69,14 @@ export default class Renderer extends Component {
       }
       this.state.contexts.set(name, context)
     })
+
+    Store.renderer.instance = readable(this)
   }
 
-  clear () {
+  clear (force = false) {
     this.#forEachLayers((canvas, context, { clear }) => {
-      if (!clear) return
-      context.clearRect(0, 0, window.innerWidth, window.innerHeight)
+      if (!clear && !force) return
+      context.clearRect(0, 0, this.props.width, this.props.height)
     })
   }
 
@@ -108,20 +115,24 @@ export default class Renderer extends Component {
   debug (position, {
     text = null,
     dimensions = [10, 10],
-    color = 'black',
+    strokeStyle = 'black',
+    fillStyle = 'transparent',
     lineWidth = null,
     path
   } = {}) {
     this.draw('debug', ctx => {
-      ctx.strokeStyle = color
+      ctx.strokeStyle = strokeStyle
+      ctx.fillStyle = fillStyle
       ctx.lineWidth = lineWidth || ctx.canvas.resolution
 
       if (path) {
         ctx.save()
         ctx.translate(position[0], position[1])
+        if (fillStyle !== 'transparent') ctx.fill(path)
         ctx.stroke(path)
         ctx.restore()
       } else {
+        if (fillStyle !== 'transparent') ctx.fillRect(position[0], position[1], dimensions[0], dimensions[1])
         ctx.strokeRect(position[0], position[1], dimensions[0], dimensions[1])
       }
 
@@ -168,21 +179,5 @@ export default class Renderer extends Component {
     const { width } = this.getContext(layerName).measureText(text)
     CACHE.set(id, width)
     return width
-  }
-
-  toDataURL () {
-    const canvas = document.createElement('canvas')
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
-
-    const ctx = canvas.getContext('2d')
-    ctx.imageSmoothingEnabled = false
-
-    this.#forEachLayers((c, _, { exportable }) => {
-      if (!exportable) return
-      ctx.drawImage(c, 0, 0, canvas.width, canvas.height)
-    })
-
-    return canvas.toDataURL()
   }
 }

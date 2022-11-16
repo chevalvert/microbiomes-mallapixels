@@ -15,8 +15,9 @@
   }
 }
 
-@mixin debug ($color: red) {
+@mixin debug ($outline-offset: 0, $color: red) {
   outline: 1px solid $color !important;
+  outline-offset: $outline-offset;
 }
 
 @mixin easing ($duration: 100ms, $property: all, $will-change: false) {

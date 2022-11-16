@@ -8,6 +8,7 @@ export default class Creature {
   get renderer () { return Store.renderer.instance ? Store.renderer.instance.current : null }
 
   constructor ({
+    pattern = {},
     animated = false,
     speed = randomInt(1, 4),
     shape = 'rectangle',
@@ -25,17 +26,19 @@ export default class Creature {
     this.speed = speed
     this.timestamp = Date.now()
     this.animated = animated
-    this.size = size
+    this.size = Array.isArray(size) ? randomOf(size) : size
+
     this.bounds = bounds
-    this.position = position.map(v => Math.floor(v - size / 2))
+    this.position = position.map(v => Math.floor(v - this.size / 2))
     this.ppos = this.position
 
     this.seed = position[0] + position[1] + Date.now()
+    this.pattern = pattern
 
     if (sprite) {
       this.sprite = sprite.map(polygon => Polygon.toPath2d(polygon, resolution))
     } else {
-      const polygon = Polygon.shape(shape, { size, resolution })
+      const polygon = Polygon.shape(shape, { size: this.size, resolution })
       this.sprite = Polygon.tamagotchize(polygon, {
         resolution,
         direction: randomOf(['horizontal', 'vertical']),
@@ -84,31 +87,14 @@ export default class Creature {
     ) - this.radius
   }
 
-  render ({ debug = false, blink = false } = {}) {
-    this.renderer.draw('creatures', ctx => {
-      ctx.save()
-      ctx.fillStyle = this.color
-      ctx.lineWidth = ctx.canvas.resolution
-      ctx.translate(this.center[0], this.center[1])
-      ctx.fill(this.path)
-      ctx.restore()
+  render ({ showStroke = this.SHOW_STROKE } = {}) {
+    if (!showStroke) return
+    this.renderer.debug(this.center, {
+      strokeStyle: this.color,
+      path: this.path,
+      lineWidth: 3,
+      dimensions: [this.size, this.size]
     })
-
-    if (debug) {
-      // Render bbox
-      this.renderer.debug(this.position, {
-        text: this.constructor.name.toLowerCase(),
-        dimensions: [this.size, this.size]
-      })
-
-      // Render path
-      !blink && this.renderer.debug(this.center, {
-        color: this.debugColor,
-        path: this.path,
-        lineWidth: 3,
-        dimensions: [this.size, this.size]
-      })
-    }
   }
 
   toJSON () {
@@ -116,7 +102,8 @@ export default class Creature {
       type: this.constructor.name,
       speed: this.speed,
       size: this.size,
-      sprite: this.sprite.map(path => path.toString())
+      sprite: this.sprite.map(path => path.toString()),
+      pattern: this.pattern.toJson()
     }
   }
 }

@@ -2,31 +2,31 @@
 
 const path = require('path')
 const pkg = require('../package.json')
-require('dotenv').config({ path: path.resolve(__dirname, '.env') })
+const sudo = require('sudo-js')
 
+const external = require('./utils/external-file')
+require('dotenv').config({ path: external('.env') })
+
+sudo.setPassword(process.env.SUDO)
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
-process.env.CONFIGURATION = path.join(__dirname, process.env.CONFIGURATION)
+process.env.CONFIGURATION = external(process.env.CONFIGURATION)
 
-const fs = require('fs-extra')
 const http = require('http')
 const express = require('express')
 const upload = require('express-fileupload')
 const session = require('express-session')
 const Websocket = require('./websocket')
-const FileStore = require('session-file-store')(session)
+const MemoryStore = require('memorystore')(session)
 const logger = require('./utils/logger')
 const render = require('./api/render')
+const StripLed = require('./api/strip-led')
 
 const app = express()
 const server = http.createServer(app)
 const sessionParser = session({
   saveUninitialized: true,
   secret: pkg.name,
-  store: new FileStore({
-    path: path.resolve(__dirname, process.env.SESSIONS),
-    logFn: logger({ color: 'gray', prefix: '[SESSION]' }),
-    encoding: 'utf8'
-  }),
+  store: new MemoryStore({ checkPeriod: 24 * 60 * 60 * 1000 }),
   // Use same session for every req to debug ws w/ API using different softwares
   genid: process.env.NODE_ENV === 'development' ? req => 'dev-session' : undefined,
   resave: false,
@@ -34,6 +34,8 @@ const sessionParser = session({
     maxAge: 365 * 24 * 60 * 60 * 1000
   }
 })
+
+StripLed.connect(process.env.STRIPLED_ADDRESS)
 
 // Log request
 app.use((req, res, next) => {
@@ -54,7 +56,6 @@ app.use(sessionParser)
 
 // Setup webpack middlewares
 if (process.env.NODE_ENV === 'development') {
-  const { exec } = require('child_process')
   const webpack = require('webpack')
   const config = require('../webpack.config.js')
   const compiler = webpack(config)
@@ -67,24 +68,6 @@ if (process.env.NODE_ENV === 'development') {
     publicPath: config.output.publicPath
   })
 
-  // Add a dev route to save an image as the preview, commit and tag
-  app.use('/dev/snapshot', async (req, res) => {
-    if (!req.body) throw new Error('No body attached')
-    if (!req.body.image) throw new Error('No `image` key on the body')
-
-    await new Promise((resolve, reject) => {
-      exec('npm run build', (error, stdout) => error ? reject(error) : resolve(stdout))
-    })
-
-    const filename = String(Date.now())
-    const snapshots = path.join(__dirname, '..', 'snapshots')
-    await fs.move(path.join(__dirname, '..', 'build'), path.join(snapshots, filename))
-    await fs.copy(path.join(__dirname, '..', 'src'), path.join(snapshots, filename, 'src'))
-    await fs.writeFile(path.join(snapshots, filename + '.png'), req.body.image.replace(/^data:image\/png;base64,/, ''), 'base64')
-
-    res.sendStatus('201')
-  })
-
   app.use(devMiddleware)
   app.use(hotMiddleware)
 }
@@ -95,6 +78,8 @@ app.use(express.static(path.join(__dirname, '..', 'static')))
 
 // Setup API routes
 app.use('/api/ping', (req, res) => res.status(200).json({ version: pkg.version }))
+Websocket.on('stripled', StripLed.set)
+Websocket.on('shutdown', () => sudo.exec(['shutdown', '-u', '-h', 'now']))
 
 // Setup front routes
 app.use(['/screen/:id', '/screen'], render('main.hbs'))

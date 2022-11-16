@@ -20,8 +20,6 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx'],
     alias: {
-      shared: path.join(__dirname, 'shared'),
-
       abstractions: path.join(__dirname, 'src', 'abstractions'),
       components: path.join(__dirname, 'src', 'components'),
       controllers: path.join(__dirname, 'src', 'controllers'),
