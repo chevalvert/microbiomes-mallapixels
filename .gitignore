@@ -1,8 +1,8 @@
 build/*
-server/data/*
 .env
-snapshots/*
-microbiomes-mallapixels.app/
+server/app*.json
+!server/app.example.json
+!server/.env.example
 
 ####### NODE ########
 .tmp
