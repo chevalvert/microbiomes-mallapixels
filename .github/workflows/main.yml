@@ -4,8 +4,14 @@ on:
     tags:
       - '*'
 
+concurrency:
+  group: 'production'
+  cancel-in-progress: true
+
 jobs:
   deploy:
+    environment:
+      name: production
     runs-on: ubuntu-latest
     steps:
       - name: Deploy NodeJS app
