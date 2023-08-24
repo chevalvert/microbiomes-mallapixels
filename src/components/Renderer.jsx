@@ -30,6 +30,7 @@ export default class Renderer extends Component {
       <section
         id='Renderer'
         class='renderer'
+        style={`--padding: ${props.padding}px`}
       >
         {Object.entries(Store.renderer.layers.current).map(([name]) => (
           <canvas
@@ -48,6 +49,8 @@ export default class Renderer extends Component {
     this.#forEachLayers((canvas, context, { name, resolution, roundTo, style = {} }) => {
       canvas.width = this.props.width * resolution
       canvas.height = this.props.height * resolution
+      canvas.style.width = this.props.width + 'px'
+      canvas.style.height = this.props.height + 'px'
       canvas.resolution = 1 / resolution
 
       for (const [prop, value] of Object.entries(style)) {
@@ -76,7 +79,7 @@ export default class Renderer extends Component {
   clear (force = false) {
     this.#forEachLayers((canvas, context, { clear }) => {
       if (!clear && !force) return
-      context.clearRect(0, 0, this.props.width, this.props.height)
+      context.clearRect(0, 0, canvas.width, canvas.height)
     })
   }
 

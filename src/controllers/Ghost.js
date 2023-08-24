@@ -10,7 +10,9 @@ WebSocketServer.content.subscribe(reset)
 function tick () {
   const next = randomInt(window.ENV.ghostRemote[0], window.ENV.ghostRemote[1])
   timer = window.setTimeout(() => {
-    Population.add(Population.createRandomCreature())
+    const creature = Population.createRandomCreature()
+    WebSocketServer.send('creature', creature.toJSON())
+    Population.add(creature)
     tick()
   }, next)
 }

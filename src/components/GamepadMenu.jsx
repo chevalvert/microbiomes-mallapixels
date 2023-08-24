@@ -29,8 +29,8 @@ export default class Button extends Component {
 
     Gamepad.on('up', () => this.state.selectedEntryIndex.update(i => clamp(--i, 0, this.refs.entries.length - 1)))
     Gamepad.on('down', () => this.state.selectedEntryIndex.update(i => clamp(++i, 0, this.refs.entries.length - 1)))
-    Gamepad.on('right', this.handleSubEntryChange(-1))
-    Gamepad.on('left', this.handleSubEntryChange(+1))
+    Gamepad.on('left', this.handleSubEntryChange(-1))
+    Gamepad.on('right', this.handleSubEntryChange(+1))
   }
 
   clear () {

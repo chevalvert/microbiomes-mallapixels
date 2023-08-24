@@ -1,0 +1,75 @@
+.cartel {
+  --gutter: 4rem;
+
+  padding: var(--gutter);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+
+  height: 100%;
+
+  header {
+    margin-bottom: 3rem;
+  }
+
+  h1 {
+    font-size: 8rem;
+    font-weight: normal;
+    text-transform: lowercase;
+    margin-left: -0.06em;
+  }
+
+  h2 {
+    font-size: 2rem;
+    font-weight: normal;
+    font-style: italic;
+  }
+
+  &__text {
+    gap: 16rem;
+
+    font-size: 2.0rem;
+    line-height: 1.3;
+
+    column-count: 2;
+    column-gap: calc(var(--gutter) * 1.5);
+
+    p {
+      margin-bottom: 1em;
+    }
+  }
+
+  &__renderers {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    height: fit-content;
+  }
+
+  .renderer canvas:first-child {
+    outline: 1px solid rgba(255, 255, 255, 0.3);
+    outline-offset: -1px;
+  }
+
+  .renderer::before {
+    text-transform: lowercase;
+    bottom: -3rem;
+    width: 100%;
+    font-size: small;
+    text-align: center;
+    position: absolute;
+    color: white;
+    content: attr(data-name);
+  }
+
+  footer {
+    height: 8rem;
+    display: flex;
+    justify-content: flex-end;
+
+    img {
+      height: 100%;
+      width: auto;
+    }
+  }
+}

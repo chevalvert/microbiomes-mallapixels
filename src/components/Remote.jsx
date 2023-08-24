@@ -52,8 +52,6 @@ export default class Remote extends Component {
     this.state.gamepadValue.subscribe(this.update)
     this.update()
 
-    window.setTimeout(() => this.handleSend(), 1000)
-
     Gamepad.on(window.ENV.gamepad.mapping.random, this.update)
     Gamepad.on(window.ENV.gamepad.mapping.send, this.handleSend)
   }

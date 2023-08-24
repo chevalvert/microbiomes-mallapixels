@@ -5,7 +5,8 @@ import stringToColor from 'utils/string-to-color'
 import { randomOf } from 'controllers/Prng'
 
 export default class Creature {
-  get renderer () { return Store.renderer.instance ? Store.renderer.instance.current : null }
+  set renderer (renderer) { this.__renderer = renderer }
+  get renderer () { return this.__renderer ?? (Store.renderer.instance ? Store.renderer.instance.current : null) }
 
   constructor ({
     pattern = {},
@@ -92,7 +93,7 @@ export default class Creature {
     this.renderer.debug(this.center, {
       strokeStyle: this.color,
       path: this.path,
-      lineWidth: 3,
+      lineWidth: 2,
       dimensions: [this.size, this.size]
     })
   }

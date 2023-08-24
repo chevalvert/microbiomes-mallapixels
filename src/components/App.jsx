@@ -5,7 +5,11 @@ export default class App extends Component {
   template (props, state) {
     return (
       <main id='App' class='app'>
-        <Renderer width={window.innerWidth} height={window.innerHeight} />
+        <Renderer
+          padding={window.ENV.renderer.padding}
+          width={window.innerWidth}
+          height={window.innerHeight}
+        />
       </main>
     )
   }
