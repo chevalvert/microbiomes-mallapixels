@@ -1,9 +1,14 @@
+/* global APP */
+
+// TODO physical ui
+// TODO creature name
+
 import Store from 'store'
 import { Component } from 'utils/jsx'
 import { writable } from 'utils/state'
-
 import Gamepad from 'controllers/Gamepad'
 import Population from 'controllers/Population'
+import Sound from 'controllers/Sound'
 import WebSocketServer from 'controllers/WebSocketServer'
 
 import Renderer from 'components/Renderer'
@@ -52,8 +57,8 @@ export default class Remote extends Component {
     this.state.gamepadValue.subscribe(this.update)
     this.update()
 
-    Gamepad.on(window.ENV.gamepad.mapping.random, this.update)
-    Gamepad.on(window.ENV.gamepad.mapping.send, this.handleSend)
+    Gamepad.on(APP.gamepad.keyMapping.random, this.update)
+    Gamepad.on(APP.gamepad.keyMapping.send, this.handleSend)
   }
 
   update () {
@@ -66,7 +71,7 @@ export default class Remote extends Component {
   }
 
   handleTick () {
-    this.refs.renderer.clear(true)
+    this.refs.renderer.clear({ force: true })
 
     const creature = this.state.creature.get()
     if (!creature) return
@@ -86,7 +91,13 @@ export default class Remote extends Component {
     void this.refs.renderer.base.offsetHeight // eslint-disable-line no-void
     this.refs.renderer.base.style.animation = null
 
-    WebSocketServer.send('creature', this.state.creature.current.toJSON())
+    Sound.random()
+    Sound.play()
+
+    WebSocketServer.send('creature', {
+      from: window.UID,
+      creature: this.state.creature.current.toJSON()
+    })
   }
 
   beforeDestroy () {

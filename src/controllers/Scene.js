@@ -1,3 +1,4 @@
+/* global APP */
 import Store from 'store'
 
 export function setup () {}
@@ -11,16 +12,15 @@ export function update () {
   renderer.clear()
 
   for (const creature of Store.population.content.get()) {
+    const showStroke = debug || creature.timestamp + (APP.scene.displayNewCreature || -1) > now
     creature.update()
-    creature.render({
-      showStroke: debug || creature.timestamp + (window.ENV.scene.displayNewCreature || -1) > now
-    })
+    creature.render({ showStroke, showName: showStroke })
   }
 }
 
 export function clear () {
   const renderer = Store.renderer.instance.get()
-  if (renderer) renderer.clear(true)
+  if (renderer) renderer.clear({ force: true })
 }
 
 export default { setup, update, clear }

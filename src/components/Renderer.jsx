@@ -30,7 +30,7 @@ export default class Renderer extends Component {
       <section
         id='Renderer'
         class='renderer'
-        style={`--padding: ${props.padding}px`}
+        style={`--padding: ${props.padding ?? 0}px`}
       >
         {Object.entries(Store.renderer.layers.current).map(([name]) => (
           <canvas
@@ -76,10 +76,10 @@ export default class Renderer extends Component {
     Store.renderer.instance = readable(this)
   }
 
-  clear (force = false) {
-    this.#forEachLayers((canvas, context, { clear }) => {
-      if (!clear && !force) return
-      context.clearRect(0, 0, canvas.width, canvas.height)
+  clear ({ force = false } = {}) {
+    this.#forEachLayers((canvas, context, { name, clear }) => {
+      if (!force && !clear) return
+      context.clearRect(0, 0, canvas.width * canvas.resolution, canvas.height * canvas.resolution)
     })
   }
 
@@ -115,7 +115,8 @@ export default class Renderer extends Component {
     })
   }
 
-  debug (position, {
+  shape ({
+    position,
     text = null,
     dimensions = [10, 10],
     strokeStyle = 'black',
@@ -123,7 +124,7 @@ export default class Renderer extends Component {
     lineWidth = null,
     path
   } = {}) {
-    this.draw('debug', ctx => {
+    return ctx => {
       ctx.strokeStyle = strokeStyle
       ctx.fillStyle = fillStyle
       ctx.lineWidth = lineWidth || ctx.canvas.resolution
@@ -154,7 +155,7 @@ export default class Renderer extends Component {
         ctx.fillStyle = 'white'
         ctx.fillText(text, x, y + fontSize - padding / 2)
       }
-    })
+    }
   }
 
   noise (i, j, {
@@ -175,7 +176,7 @@ export default class Renderer extends Component {
     }
   }
 
-  #measureText (text, layerName = 'debug') {
+  #measureText (text, layerName = 'text') {
     const id = layerName + '__' + text
     if (CACHE.has(id)) return CACHE.get(id)
 

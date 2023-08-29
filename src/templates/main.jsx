@@ -1,10 +1,7 @@
-// TODO map remote position on screen and spawn creatures at correct start pos
-// TODO add temp name display when a creature spawns (create a UID for each creature)
-// TODO add fps meter and tick count
-// TODO check for memleaks
-// TODO add pokedex page for interactive cartel
-// TODO sound
+/* global APP */
+
 // TODO creature builder for workshops
+// TODO remote ui
 
 import Store from 'store'
 import { render } from 'utils/jsx'
@@ -32,13 +29,13 @@ require('webpack-hot-middleware/client?reload=true')
   Gamepad.bind()
   render(<App />, document.body)
 
-  if (window.ENV.buildPatternCache) {
+  if (APP.prebuildPatternCache) {
     const progress = writable('0%')
     const splashscreen = render(<Splashscreen text={progress} />, document.body).components[0]
     const { target, generator } = buildCache(
       Store.renderer.instance.current.state.contexts.get('trace'),
-      window.ENV.scene.patterns,
-      window.ENV.scene.palettes
+      APP.scene.patterns,
+      APP.scene.palettes
     )
 
     let i = 0
@@ -50,29 +47,24 @@ require('webpack-hot-middleware/client?reload=true')
     splashscreen.destroy()
   }
 
-  WebSocketServer.open(window.ENV.remoteWebSocketServer)
-
   Scene.setup()
-  Store.raf.frameCount.subscribe(Scene.update)
-
-  if (window.ENV.ghostRemote) Ghost.start()
-
-  WebSocketServer.emitter.on('creature', data => {
-    Population.add(data)
-  })
-
+  WebSocketServer.open(APP.remoteWebSocketServer)
+  if (APP.gamepad.ghost) Ghost.start()
   Raf.start()
 
-  if (window.ENV.ticksBeforeRefresh) {
-    console.log(`Refreshing in ${window.ENV.ticksBeforeRefresh} ticks !`)
+  WebSocketServer.emitter.on('creature', Population.add)
+  Store.raf.frameCount.subscribe(Scene.update)
+
+  if (APP.ticksBeforeRefresh) {
+    console.log(`Refreshing in ${APP.ticksBeforeRefresh} ticks !`)
     Store.raf.frameCount.subscribe(frameCount => {
-      if (frameCount < window.ENV.ticksBeforeRefresh) return
+      if (frameCount < APP.ticksBeforeRefresh) return
       window.location.reload()
     })
   }
 })()
 
-Gamepad.on(window.ENV.gamepad.mapping.clear, () => {
+Gamepad.on(APP.gamepad.keyMapping.clear, () => {
   Population.clear()
   Scene.clear()
 })

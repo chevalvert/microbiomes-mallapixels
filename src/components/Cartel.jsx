@@ -1,3 +1,4 @@
+/* global APP */
 import Store from 'store'
 import { Component } from 'utils/jsx'
 import { writable } from 'utils/state'
@@ -23,7 +24,7 @@ export default class Cartel extends Component {
     return (
       <main id='Cartel' class='cartel'>
         <header>
-          <h1>{window.ENV.title}</h1>
+          <h1>{APP.title}</h1>
           <h2>studio chevalvert, 2023</h2>
         </header>
 
@@ -55,18 +56,17 @@ export default class Cartel extends Component {
     WebSocketServer.emitter.on('creature', this.handleCreature)
   }
 
-  handleCreature (data) {
-    const creature = Population.create(data)
+  handleCreature ({ from, creature } = {}) {
     this.state.creatures.update(creatures => {
       if (creatures.length > this.refs.renderers.length - 1) creatures.shift()
-      creatures.push(creature)
+      creatures.push(Population.create(creature))
       return creatures
     }, true)
   }
 
   handleTick () {
     for (const renderer of this.refs.renderers) {
-      renderer.clear(true)
+      renderer.clear({ force: true })
     }
 
     const creatures = this.state.creatures.get()
@@ -78,9 +78,8 @@ export default class Cartel extends Component {
         (creature.renderer.props.height - creature.size) / 2
       ]
 
-      // TODO creature name
-      creature.renderer.base.dataset.name = `<${creature.constructor.name}>#${creature.timestamp}`
-      creature.render({ showStroke: true })
+      creature.renderer.base.dataset.name = creature.uid
+      creature.render({ showStroke: true, showName: false })
     }
   }
 

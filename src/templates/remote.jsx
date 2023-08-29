@@ -3,6 +3,7 @@ import { render } from 'utils/jsx'
 import Remote from 'components/Remote'
 
 import Raf from 'controllers/Raf'
+import Sound from 'controllers/Sound'
 import WebSocketServer from 'controllers/WebSocketServer'
 import Gamepad from 'controllers/Gamepad'
 
@@ -16,5 +17,6 @@ require('webpack-hot-middleware/client?reload=true')
 
   Raf.start()
   Gamepad.bind()
+  Gamepad.on('keypress', () => Sound.load())
   WebSocketServer.open()
 })()

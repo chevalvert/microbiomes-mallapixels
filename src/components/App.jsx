@@ -1,3 +1,4 @@
+/* global APP */
 import { Component } from 'utils/jsx'
 import Renderer from 'components/Renderer'
 
@@ -6,7 +7,7 @@ export default class App extends Component {
     return (
       <main id='App' class='app'>
         <Renderer
-          padding={window.ENV.renderer.padding}
+          padding={APP.renderer.padding}
           width={window.innerWidth}
           height={window.innerHeight}
         />
