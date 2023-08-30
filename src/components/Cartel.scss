@@ -41,8 +41,9 @@
 
   &__renderers {
     flex: 1;
-    display: grid;
-    grid-template-columns: repeat(var(--cols), 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
     height: fit-content;
   }
 

@@ -50,6 +50,7 @@ const Store = {
       restorer: 'Restorer'
     }),
     behaviors: readable({
+      // TODO small = circle, medium = rect, large = blob
       shifter: {
         small: { speed: 1, size: [10, 15, 15, 20, 20] },
         medium: { speed: 2, size: [30, 50, 50, 60, 70] },

@@ -9,6 +9,8 @@ export function update () {
   const debug = Store.renderer.debug.get()
   const now = Date.now()
 
+  // TODO stamp title on left and right every 15min of inactivity
+
   renderer.clear()
 
   for (const creature of Store.population.content.get()) {
