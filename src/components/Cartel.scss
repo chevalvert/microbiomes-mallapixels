@@ -44,10 +44,15 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0;
+    line-height: 0;
+    align-content: center;
     height: fit-content;
   }
 
   .renderer {
+    margin-left: -1px;
+    margin-bottom: -1px;
+
     &::before {
       position: absolute;
       bottom: 0;
