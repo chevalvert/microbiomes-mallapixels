@@ -43,32 +43,6 @@ const Store = {
     content: writable([])
   },
 
-  creatures: {
-    types: readable({
-      builder: 'Builder',
-      shifter: 'Shifter',
-      restorer: 'Restorer'
-    }),
-    behaviors: readable({
-      // TODO small = circle, medium = rect, large = blob
-      shifter: {
-        small: { speed: 1, size: [10, 15, 15, 20, 20] },
-        medium: { speed: 2, size: [30, 50, 50, 60, 70] },
-        large: { speed: 4, size: [80, 100, 125] }
-      },
-      restorer: {
-        small: { speed: 1, size: [10, 15, 15, 20, 20] },
-        medium: { speed: 2, size: [50, 30, 50, 60, 70, 70] },
-        large: { speed: 4, size: [80, 100, 125] }
-      },
-      builder: {
-        small: { speed: 1, size: [10, 15, 15, 20, 20] },
-        medium: { speed: 2, size: [50, 30, 50, 60, 70, 70] },
-        large: { speed: 4, size: [80, 100, 125] }
-      }
-    })
-  },
-
   // Public store for the RAF controller
   raf: {
     fps: readable(APP.renderer.fps || 60),

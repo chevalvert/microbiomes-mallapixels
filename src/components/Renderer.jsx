@@ -112,6 +112,7 @@ export default class Renderer extends Component {
 
       const { left, top } = el.getBoundingClientRect()
       ctx.fillText(el.innerText, left, top + parseInt(fontSize))
+      ctx.restore()
     })
   }
 

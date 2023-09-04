@@ -1,7 +1,6 @@
 /* global APP */
 
 // TODO creature builder for workshops
-// TODO remote ui
 
 import Store from 'store'
 import { render } from 'utils/jsx'
@@ -18,6 +17,7 @@ import Hotkey from 'controllers/Hotkey'
 import Population from 'controllers/Population'
 import Raf from 'controllers/Raf'
 import Scene from 'controllers/Scene'
+import Stamp from 'controllers/Stamp'
 import WebSocketServer from 'controllers/WebSocketServer'
 
 /// #if DEVELOPMENT
@@ -27,6 +27,7 @@ require('webpack-hot-middleware/client?reload=true')
 
 ;(async () => {
   Gamepad.bind()
+
   render(<App />, document.body)
 
   if (APP.prebuildPatternCache) {
@@ -47,9 +48,11 @@ require('webpack-hot-middleware/client?reload=true')
     splashscreen.destroy()
   }
 
-  Scene.setup()
+  await Scene.setup()
   WebSocketServer.open(APP.remoteWebSocketServer)
+
   if (APP.gamepad.ghost) Ghost.start()
+  Stamp.start()
   Raf.start()
 
   WebSocketServer.emitter.on('creature', Population.add)

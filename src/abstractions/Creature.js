@@ -10,7 +10,6 @@ export default class Creature {
   get renderer () { return this.__renderer ?? (Store.renderer.instance ? Store.renderer.instance.current : null) }
 
   constructor ({
-    // TODO name based on creature type
     uid = randomName(),
     pattern = {},
     animated = false,

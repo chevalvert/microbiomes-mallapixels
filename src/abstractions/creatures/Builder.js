@@ -21,7 +21,7 @@ export default class Builder extends Creature {
   render (...args) {
     super.render(...args)
 
-    this.renderer.draw('trace', ctx => {
+    this.renderer.draw(args[0].trace || 'trace', ctx => {
       ctx.save()
       ctx.translate(this.center[0], this.center[1])
       ctx.clip(this.path)

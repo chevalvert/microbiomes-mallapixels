@@ -16,7 +16,11 @@ require('webpack-hot-middleware/client?reload=true')
   render(<Remote />, document.body)
 
   Raf.start()
-  Gamepad.bind()
-  Gamepad.on('keypress', () => Sound.load())
   WebSocketServer.open()
+
+  Gamepad.bind()
+  Gamepad.on('keypress', () => {
+    Sound.load()
+    WebSocketServer.send('gamepad:keypress')
+  })
 })()

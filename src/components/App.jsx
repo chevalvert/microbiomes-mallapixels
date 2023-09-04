@@ -11,6 +11,8 @@ export default class App extends Component {
           width={window.innerWidth}
           height={window.innerHeight}
         />
+        <h1><div>macro</div><div>biomes</div></h1>
+        <h1><div>macro</div><div>biomes</div></h1>
       </main>
     )
   }

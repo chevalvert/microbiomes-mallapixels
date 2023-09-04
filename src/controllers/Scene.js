@@ -1,15 +1,13 @@
 /* global APP */
 import Store from 'store'
 
-export function setup () {}
+export async function setup () {}
 
 export function update () {
   const renderer = Store.renderer.instance.get()
 
   const debug = Store.renderer.debug.get()
   const now = Date.now()
-
-  // TODO stamp title on left and right every 15min of inactivity
 
   renderer.clear()
 
